@@ -5,12 +5,12 @@ const prisma = new PrismaClient()
 
 
 const register = async (req, res) => {
-  const { username, password } = req.body
+  const { email, password } = req.body
   try{
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await prisma.user.create({
       data: {
-        username,
+        email,
         password: hashedPassword
       }
     })
@@ -21,9 +21,9 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-  const { username, password } = req.body
+  const { email, password } = req.body
   try{
-    const user = await prisma.user.findUnique({where: {username}})
+    const user = await prisma.user.findUnique({where: {email}})
     if(!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' })
     }
