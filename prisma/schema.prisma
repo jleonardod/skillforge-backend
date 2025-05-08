@@ -8,34 +8,46 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  password  String
-  createdAt DateTime   @default(now())
-  progress  Progress[]
+  id          Int        @id @default(autoincrement())
+  email       String     @unique
+  password    String
+  createdAt   DateTime   @default(now())
+  progress    Progress[]
 }
 
 model Course {
   id          Int      @id @default(autoincrement())
   title       String
-  description String
+  modules     Module[]
+  createdAt   DateTime @default(now())
+}
+
+model Module {
+  id          Int      @id @default(autoincrement())
+  title       String
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
   lessons     Lesson[]
+  createdAt   DateTime @default(now())
 }
 
 model Lesson {
-  id       Int        @id @default(autoincrement())
-  title    String
-  progress Progress[]
-  content  String
-  course   Course     @relation(fields: [courseId], references: [id])
-  courseId Int
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  module      Module   @relation(fields: [moduleId], references: [id])
+  moduleId    Int
+  createdAt   DateTime @default(now())
+
+  progress    Progress[]
 }
 
 model Progress {
   id          Int      @id @default(autoincrement())
   user        User     @relation(fields: [userId], references: [id])
-  lesson      Lesson   @relation(fields: [lessonId], references: [id])
   userId      Int
+  lesson      Lesson   @relation(fields: [lessonId], references: [id])
   lessonId    Int
-  completedAt DateTime @default(now())
+  completed   Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
 }
